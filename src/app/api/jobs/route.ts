@@ -4,6 +4,7 @@ import { route } from "@/lib/api";
 import { enqueueGeneration } from "@/lib/queue";
 import { getModel } from "@/lib/providers/registry";
 import { mediaUrl } from "@/lib/storage";
+import { costColumns, costForJob } from "@/lib/pricing/server";
 import type { Prisma } from "@prisma/client";
 
 const createSchema = z.object({
@@ -58,6 +59,7 @@ export async function POST(request: Request) {
       }
     }
 
+    const estimate = await costForJob(body.providerId, body.modelId, body.params);
     const job = await prisma.job.create({
       data: {
         projectId: body.projectId,
@@ -66,6 +68,7 @@ export async function POST(request: Request) {
         modelId: body.modelId,
         label: body.label ?? model.label,
         params: body.params as never,
+        ...costColumns(estimate),
       },
     });
     await enqueueGeneration(job.id);

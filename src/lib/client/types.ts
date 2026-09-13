@@ -1,4 +1,5 @@
 import type { Capability, Field, ModelSpec } from "@/lib/providers/types";
+import type { ModelRate } from "@/lib/pricing/rates";
 
 export interface ModelOption extends ModelSpec {
   providerId: string;
@@ -27,6 +28,7 @@ export interface Catalog {
     capabilities: Capability[];
   }[];
   configured: string[];
+  rates: Record<string, ModelRate>;
 }
 
 export interface Asset {
@@ -46,6 +48,9 @@ export interface Asset {
 }
 
 export interface Job {
+  costAmount?: number | null;
+  costCurrency?: string;
+  costEstimated?: boolean;
   id: string;
   projectId: string;
   capability: Capability;

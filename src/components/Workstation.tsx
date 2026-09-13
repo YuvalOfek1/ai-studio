@@ -19,6 +19,8 @@ import {
 import { get, post } from "@/lib/client/api";
 import { useProjectStream } from "@/lib/client/useProjectStream";
 import type { Catalog, CapabilityGroup, Job, ModelOption, Voice } from "@/lib/client/types";
+import { costFor, formatMoney } from "@/lib/pricing/estimate";
+import { UNIT_LABEL, rateKey } from "@/lib/pricing/rates";
 import { ParamFields } from "./ParamFields";
 import { JobCard } from "./JobCard";
 
@@ -85,6 +87,12 @@ export function Workstation({ projectId }: { projectId: string }) {
   const advancedFields = model?.fields.filter((f) => !primaryFields.includes(f)) ?? [];
 
   const capabilityJobs = jobs.filter((job) => !job.nodeId);
+  const rate = model ? catalog?.rates?.[rateKey(model.providerId, model.id)] : undefined;
+
+  // what this run will cost, live, from the same arithmetic the worker records
+  const estimate = model
+    ? costFor(model.providerId, model.id, { ...Object.fromEntries(model.fields.map((f) => [f.key, f.default])), ...params }, { rates: catalog?.rates })
+    : null;
 
   async function generate() {
     if (!model) return;
@@ -175,7 +183,12 @@ export function Workstation({ projectId }: { projectId: string }) {
               })}
               {capability?.models.length === 0 && <option value="">No model serves this capability</option>}
             </select>
-            {model?.price && <p className="mt-1.5 text-[11px] text-mist-400">Cost: {model.price}</p>}
+            {rate && (
+              <p className="mt-1.5 text-[11px] text-mist-400">
+                Rate: {formatMoney(rate.amount, "USD")} {UNIT_LABEL[rate.unit]}
+                {rate.note ? ` — ${rate.note}` : ""}
+              </p>
+            )}
             {model?.description && <p className="mt-1 text-[11px] text-mist-400">{model.description}</p>}
           </div>
 
@@ -216,6 +229,18 @@ export function Workstation({ projectId }: { projectId: string }) {
               )}
 
               {error && <p className="mt-4 rounded-lg bg-rose-500/10 p-2.5 text-[11px] text-rose-200">{error}</p>}
+
+              {estimate && (
+                <p className="mt-4 flex items-baseline justify-between rounded-lg border border-white/8 bg-white/[0.02] px-3 py-2 text-[11px]">
+                  <span className="text-mist-400">
+                    Estimated cost
+                    <span className="ml-1.5 text-mist-400/70">
+                      {estimate.quantity} × {formatMoney(estimate.rate, estimate.currency)}
+                    </span>
+                  </span>
+                  <span className="text-sm font-medium text-white">{formatMoney(estimate.amount, estimate.currency)}</span>
+                </p>
+              )}
 
               <button
                 onClick={generate}

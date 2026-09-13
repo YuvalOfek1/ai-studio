@@ -4,6 +4,7 @@ import clsx from "clsx";
 import { AlertTriangle, CheckCircle2, Download, Loader2, XCircle } from "lucide-react";
 import type { Job } from "@/lib/client/types";
 import { MediaPreview } from "./MediaPreview";
+import { formatMoney } from "@/lib/pricing/estimate";
 
 const STATUS_STYLE: Record<Job["status"], string> = {
   QUEUED: "text-mist-400 bg-white/5",
@@ -26,6 +27,15 @@ export function JobCard({ job, onCancel }: { job: Job; onCancel?: (id: string) =
               {job.status.toLowerCase()}
             </span>
             <span className="truncate text-xs text-mist-300">{job.label ?? job.modelId}</span>
+            {job.costAmount !== null && job.costAmount !== undefined && (
+              <span
+                className="shrink-0 rounded-md bg-white/5 px-1.5 py-0.5 text-[10px] text-mist-300"
+                title={job.costEstimated ? "Estimated from the rate table" : "Priced from what the provider returned"}
+              >
+                {job.costEstimated ? "≈" : ""}
+                {formatMoney(job.costAmount, job.costCurrency ?? "USD")}
+              </span>
+            )}
           </div>
           {prompt && <p className="mt-2 line-clamp-2 text-[11px] leading-relaxed text-mist-400">{prompt}</p>}
         </div>

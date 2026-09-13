@@ -50,7 +50,6 @@ const models: ModelSpec[] = [
     label: "ElevenLabs voice over",
     capability: "audio.tts",
     description: "Read a script in any voice in your account, including voices you cloned from an mp3.",
-    price: "billed per character",
     fields: [
       { key: "text", label: "Script", type: "textarea", required: true, placeholder: "What should the voice say?" },
       { key: "voice_id", label: "Voice", type: "voice", required: true },
@@ -77,7 +76,6 @@ const models: ModelSpec[] = [
     label: "ElevenLabs dubbing",
     capability: "audio.dub",
     description: "Translate and re-voice an existing audio or video file, keeping the original speaker's voice.",
-    price: "billed per minute of media",
     fields: [
       { key: "audio", label: "Source media", type: "audio", required: true },
       { key: "target_lang", label: "Target language", type: "select", required: true, default: "es", options: LANGUAGES },

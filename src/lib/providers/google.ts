@@ -30,7 +30,6 @@ const models: ModelSpec[] = [
     label: "Veo text to video",
     capability: "video.text2video",
     description: "Veo 3 generates a synced soundtrack with the clip.",
-    price: "per second of video, billed by Google",
     fields: [
       { key: "model", label: "Model", type: "select", default: VEO_MODELS[0].value, options: VEO_MODELS },
       { key: "prompt", label: "Prompt", type: "textarea", required: true },
@@ -42,7 +41,6 @@ const models: ModelSpec[] = [
     id: "veo-image2video",
     label: "Veo image to video",
     capability: "video.image2video",
-    price: "per second of video, billed by Google",
     fields: [
       { key: "model", label: "Model", type: "select", default: VEO_MODELS[0].value, options: VEO_MODELS },
       { key: "image", label: "Start frame", type: "image", required: true },
@@ -54,7 +52,6 @@ const models: ModelSpec[] = [
     id: "imagen-4",
     label: "Imagen 4",
     capability: "image.generate",
-    price: "per image, billed by Google",
     fields: [
       {
         key: "model",

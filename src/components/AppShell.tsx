@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AudioLines, KeyRound, LayoutGrid, Sparkles } from "lucide-react";
+import { AudioLines, KeyRound, LayoutGrid, Sparkles, Wallet } from "lucide-react";
+import { SpendWidget } from "./SpendWidget";
 import clsx from "clsx";
 
 const NAV = [
   { href: "/", label: "Projects", icon: LayoutGrid, match: (p: string) => p === "/" || p.startsWith("/projects") },
   { href: "/voices", label: "Voices", icon: AudioLines, match: (p: string) => p.startsWith("/voices") },
+  { href: "/spend", label: "Spend", icon: Wallet, match: (p: string) => p.startsWith("/spend") },
   { href: "/settings", label: "Providers", icon: KeyRound, match: (p: string) => p.startsWith("/settings") },
 ];
 
@@ -46,9 +48,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           })}
         </nav>
 
-        <div className="mt-auto rounded-xl border border-white/5 bg-white/[0.03] p-3 text-[11px] leading-relaxed text-mist-400">
-          Runs locally. Keys are encrypted in your own Postgres and used only to call vendors directly — no
-          middleman, no markup.
+        <div className="mt-auto space-y-3">
+          <p className="px-1 text-[11px] leading-relaxed text-mist-400">
+            Runs locally. Keys are encrypted in your own Postgres and used only to call vendors directly — no
+            middleman, no markup.
+          </p>
+          <SpendWidget />
         </div>
       </aside>
 

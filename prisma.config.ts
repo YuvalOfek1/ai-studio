@@ -1,7 +1,10 @@
+import fs from "node:fs";
 import path from "node:path";
 import { defineConfig } from "prisma/config";
 
-/** Keeps `prisma migrate` and `prisma db seed` on the same seed script. */
+// A Prisma config file turns off Prisma's own .env loading, so do it here.
+if (fs.existsSync(".env")) process.loadEnvFile(".env");
+
 export default defineConfig({
   schema: path.join("prisma", "schema.prisma"),
   migrations: { seed: "tsx --env-file=.env prisma/seed.ts" },

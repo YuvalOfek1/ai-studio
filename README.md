@@ -31,6 +31,33 @@ Wire those same workflows together on the canvas:
 
 ![node canvas](docs/flow.png)
 
+## Knowing what it costs
+
+Because you are billed by each vendor directly, the studio keeps its own books.
+
+- A **spend readout sits in the bottom corner** of every screen: this month at a
+  glance, expanding to today, all time, the current sitting, and anything still
+  running.
+- The **Spend page** breaks it down **per month** (bar chart), **per model**, **per
+  session** and **per project**. A session is one sitting — consecutive work with no
+  gap longer than 30 minutes (`SPEND_SESSION_GAP_MINUTES`).
+- The **workstation prices a generation before you run it** ("Estimated cost 1 ×
+  $0.04"), and each result card carries what it actually cost.
+
+![spend](docs/spend.png)
+
+Costs are computed from a rate table, not reported by the vendors — none of them
+return a price with the result. The defaults in `src/lib/pricing/rates.ts` are
+public list prices at the time of writing; **check them against your invoice**, and
+correct any that drifted right on the Spend page. Overrides are stored in the
+database, and *Recompute history* reprices past generations with the new rate so
+your history matches your bill.
+
+What counts as spent: jobs the vendor actually ran (`SUCCEEDED`), priced from what
+came back — real image counts, clip seconds, characters. Queued and running jobs
+are shown separately as in-flight estimates, and failed jobs are excluded but
+reported on their own line, since most vendors do not bill for them.
+
 ## Quick start
 
 ```bash

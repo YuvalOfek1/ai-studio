@@ -27,7 +27,6 @@ const models: ModelSpec[] = [
     id: "flux-generate",
     label: "FLUX image",
     capability: "image.generate",
-    price: "a few cents per image",
     fields: [
       { key: "endpoint", label: "Model", type: "select", default: ENDPOINTS[0].value, options: ENDPOINTS },
       { key: "prompt", label: "Prompt", type: "textarea", required: true },

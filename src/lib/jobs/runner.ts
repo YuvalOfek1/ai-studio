@@ -3,6 +3,7 @@ import { putObject } from "../storage";
 import { imageDimensions, kindFromMime, sniffMimeType, wavDurationMs } from "../media";
 import { getModel, getProvider } from "../providers/registry";
 import { resolveCredential } from "../providers/credentials";
+import { costColumns, costForJob, usageFromAssets } from "../pricing/server";
 import {
   ProviderError,
   type MediaInput,
@@ -170,9 +171,12 @@ export async function runJob(jobId: string): Promise<void> {
 
     await prisma.job.update({ where: { id: jobId }, data: { progress: 97 } });
     const assets = await persistOutputs(job, outputs);
+
+    // the estimate guessed at clip length and image count; now we know
+    const actual = await costForJob(job.providerId, job.modelId, params, usageFromAssets(assets, params));
     await prisma.job.update({
       where: { id: jobId },
-      data: { status: "SUCCEEDED", progress: 100, finishedAt: new Date() },
+      data: { status: "SUCCEEDED", progress: 100, finishedAt: new Date(), ...costColumns(actual) },
     });
     log(`succeeded with ${assets.length} asset(s)`);
   } catch (error) {

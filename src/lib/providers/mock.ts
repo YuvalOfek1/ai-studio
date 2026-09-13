@@ -111,7 +111,7 @@ const durationField = {
 };
 
 function model(id: string, label: string, capability: ModelSpec["capability"], fields: ModelSpec["fields"]): ModelSpec {
-  return { id, label, capability, price: "free", description: "Offline placeholder output.", fields };
+  return { id, label, capability, description: "Offline placeholder output.", fields };
 }
 
 const models: ModelSpec[] = [

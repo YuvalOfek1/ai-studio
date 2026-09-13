@@ -48,7 +48,6 @@ const models: ModelSpec[] = [
     id: "minimax-t2v",
     label: "Hailuo text to video",
     capability: "video.text2video",
-    price: "per clip, billed by MiniMax",
     fields: [
       { key: "model", label: "Model", type: "select", default: VIDEO_MODELS[0].value, options: VIDEO_MODELS },
       prompt,
@@ -61,7 +60,6 @@ const models: ModelSpec[] = [
     id: "minimax-i2v",
     label: "Hailuo image to video",
     capability: "video.image2video",
-    price: "per clip, billed by MiniMax",
     fields: [
       { key: "model", label: "Model", type: "select", default: VIDEO_MODELS[0].value, options: VIDEO_MODELS },
       { key: "image", label: "Start frame", type: "image", required: true },
@@ -74,7 +72,6 @@ const models: ModelSpec[] = [
     id: "minimax-flf2v",
     label: "Hailuo start + end frame",
     capability: "video.startEndFrame",
-    price: "per clip, billed by MiniMax",
     fields: [
       { key: "model", label: "Model", type: "select", default: "MiniMax-Hailuo-02", options: VIDEO_MODELS },
       { key: "image", label: "Start frame", type: "image", required: true },

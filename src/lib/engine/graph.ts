@@ -2,6 +2,7 @@ import { prisma } from "../db";
 import { runJob } from "../jobs/runner";
 import { topologicalOrder, type FlowGraph, type FlowNodeData } from "./nodes";
 import { getModel } from "../providers/registry";
+import { costColumns, costForJob } from "../pricing/server";
 
 /**
  * Executes a saved node graph. Nodes run in topological order; a generation node
@@ -88,6 +89,7 @@ export async function runWorkflow(runId: string): Promise<void> {
             params[handle] = valueForParam(value);
           }
 
+          const estimate = await costForJob(data.providerId, data.modelId, params);
           const job = await prisma.job.create({
             data: {
               projectId,
@@ -98,6 +100,7 @@ export async function runWorkflow(runId: string): Promise<void> {
               params: params as never,
               workflowRunId: runId,
               nodeId,
+              ...costColumns(estimate),
             },
           });
 

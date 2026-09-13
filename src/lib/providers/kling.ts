@@ -112,7 +112,6 @@ const models: ModelSpec[] = [
     id: "kling-image",
     label: "Kling image",
     capability: "image.generate",
-    price: "per image, billed by Kling",
     fields: [
       prompt,
       negative,
@@ -124,14 +123,12 @@ const models: ModelSpec[] = [
     id: "kling-text2video",
     label: "Kling text to video",
     capability: "video.text2video",
-    price: "per clip, billed by Kling",
     fields: [modelName(), prompt, negative, mode, duration, aspect, cfg],
   },
   {
     id: "kling-image2video",
     label: "Kling image to video",
     capability: "video.image2video",
-    price: "per clip, billed by Kling",
     fields: [modelName(), { key: "image", label: "Start frame", type: "image", required: true }, prompt, negative, mode, duration, cfg],
   },
   {
@@ -139,7 +136,6 @@ const models: ModelSpec[] = [
     label: "Kling start + end frame",
     capability: "video.startEndFrame",
     description: "Kling interpolates between the two frames you provide.",
-    price: "per clip, billed by Kling",
     fields: [
       { key: "model_name", label: "Model version", type: "select", default: "kling-v1-6", options: VIDEO_MODELS },
       { key: "image", label: "Start frame", type: "image", required: true },

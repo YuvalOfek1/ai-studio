@@ -46,14 +46,12 @@ const models: ModelSpec[] = [
     id: "runway-i2v",
     label: "Runway image to video",
     capability: "video.image2video",
-    price: "credits, billed by Runway",
     fields: [{ key: "image", label: "Start frame", type: "image", required: true }, ...shared],
   },
   {
     id: "runway-startend",
     label: "Runway start + end frame",
     capability: "video.startEndFrame",
-    price: "credits, billed by Runway",
     fields: [
       { key: "image", label: "Start frame", type: "image", required: true },
       { key: "image_tail", label: "End frame", type: "image", required: true },

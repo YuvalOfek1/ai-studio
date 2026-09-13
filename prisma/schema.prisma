@@ -77,8 +77,17 @@ model Job {
   progress       Int       @default(0)
   providerTaskId String?
   error          String?
-  costEstimate   Float?
   attempts       Int       @default(0)
+
+  /// What this generation cost, in costCurrency. Recorded as an estimate when the
+  /// job is queued, then rewritten with real usage (images, clip seconds, characters)
+  /// once the provider answers.
+  costAmount    Float?
+  costCurrency  String   @default("USD")
+  costUnit      String?
+  costQuantity  Float?
+  costRate      Float?
+  costEstimated Boolean  @default(true)
   startedAt      DateTime?
   finishedAt     DateTime?
   createdAt      DateTime  @default(now())
@@ -158,4 +167,19 @@ model Voice {
   createdAt       DateTime @default(now())
 
   @@unique([providerId, providerVoiceId])
+}
+
+/// A per-model price override, so vendor price changes never need a code change.
+model PricingRate {
+  id         String   @id @default(cuid())
+  providerId String
+  modelId    String
+  unit       String
+  amount     Float
+  currency   String   @default("USD")
+  note       String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([providerId, modelId])
 }

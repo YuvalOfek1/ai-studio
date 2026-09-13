@@ -1,12 +1,13 @@
 import { route } from "@/lib/api";
 import { catalog } from "@/lib/providers/registry";
 import { configuredProviderIds } from "@/lib/providers/credentials";
+import { resolveRates } from "@/lib/pricing/server";
 
 /** Everything the UI needs to render model pickers and parameter forms. */
 export async function GET() {
   return route(async () => {
     const data = catalog();
     const configured = await configuredProviderIds();
-    return { ...data, configured };
+    return { ...data, configured, rates: await resolveRates() };
   });
 }

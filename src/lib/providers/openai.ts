@@ -28,7 +28,6 @@ const models: ModelSpec[] = [
     label: "GPT Image 1",
     capability: "image.generate",
     description: "Strong prompt following and readable text inside images.",
-    price: "per image, by size and quality",
     fields: [
       { key: "prompt", label: "Prompt", type: "textarea", required: true },
       { key: "size", label: "Size", type: "select", default: "1024x1024", options: SIZES },

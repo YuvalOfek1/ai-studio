@@ -73,8 +73,6 @@ export interface ModelSpec {
   label: string;
   capability: Capability;
   description?: string;
-  /** Human readable list price, shown in the UI so cost is never a surprise. */
-  price?: string;
   fields: Field[];
 }
 
