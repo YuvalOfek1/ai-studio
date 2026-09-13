@@ -34,6 +34,16 @@ attach to an image input:
 
 ![node canvas](docs/flow.png)
 
+## Reviewing what you made
+
+Click any result or library tile to open it full size: video and audio play with
+real controls, images open fitted with a toggle to 1:1, and the arrow keys walk
+the set you opened it from so a batch of results can be reviewed without closing
+anything. Video tiles play silently on hover, so the grid is scannable. Download
+and *open the raw file* are still one click away, in the viewer's header.
+
+![preview](docs/preview.png)
+
 ## Knowing what it costs
 
 Because you are billed by each vendor directly, the studio keeps its own books.

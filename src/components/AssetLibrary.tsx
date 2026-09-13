@@ -2,10 +2,11 @@
 
 import { useCallback, useRef, useState } from "react";
 import clsx from "clsx";
-import { Download, Trash2, Upload } from "lucide-react";
+import { Download, Expand, Trash2, Upload } from "lucide-react";
 import { del, post } from "@/lib/client/api";
 import { useProjectAssets } from "./AssetPicker";
 import { MediaPreview } from "./MediaPreview";
+import { MediaLightbox } from "./MediaLightbox";
 import type { Asset } from "@/lib/client/types";
 
 const FILTERS = [
@@ -25,6 +26,7 @@ export function AssetLibrary({ projectId }: { projectId: string }) {
   const { assets, refresh } = useProjectAssets(projectId);
   const [filter, setFilter] = useState<(typeof FILTERS)[number]["id"]>("ALL");
   const [busy, setBusy] = useState(false);
+  const [preview, setPreview] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const upload = useCallback(
@@ -94,9 +96,17 @@ export function AssetLibrary({ projectId }: { projectId: string }) {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {visible.map((asset: Asset) => (
             <div key={asset.id} className="panel panel-hover group overflow-hidden">
-              <div className="aspect-square">
-                <MediaPreview asset={asset} controls={asset.kind === "AUDIO"} className="h-full w-full" />
-              </div>
+              <button
+                type="button"
+                onClick={() => setPreview(visible.indexOf(asset))}
+                className="relative block aspect-square w-full cursor-zoom-in"
+                title="Open preview"
+              >
+                <MediaPreview asset={asset} controls={false} hoverPlay className="h-full w-full" />
+                <span className="absolute inset-0 flex items-center justify-center bg-ink-950/45 opacity-0 transition group-hover:opacity-100">
+                  <Expand className="h-5 w-5 text-white" />
+                </span>
+              </button>
               <div className="flex items-center justify-between gap-2 p-3">
                 <div className="min-w-0">
                   <p className="truncate text-xs text-mist-200">{asset.name}</p>
@@ -109,6 +119,7 @@ export function AssetLibrary({ projectId }: { projectId: string }) {
                   <a
                     href={asset.url}
                     download={asset.name}
+                    onClick={(event) => event.stopPropagation()}
                     className="rounded-lg p-1.5 text-mist-400 hover:bg-white/5 hover:text-white"
                   >
                     <Download className="h-3.5 w-3.5" />
@@ -127,6 +138,20 @@ export function AssetLibrary({ projectId }: { projectId: string }) {
             </div>
           ))}
         </div>
+      )}
+
+      {preview !== null && visible[preview] && (
+        <MediaLightbox
+          assets={visible}
+          index={preview}
+          onIndexChange={setPreview}
+          onClose={() => setPreview(null)}
+          onDelete={async (asset) => {
+            await del(`/api/assets/${asset.id}`);
+            setPreview(null);
+            refresh();
+          }}
+        />
       )}
     </div>
   );

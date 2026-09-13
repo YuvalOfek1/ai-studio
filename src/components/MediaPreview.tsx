@@ -12,10 +12,13 @@ export function MediaPreview({
   asset,
   className,
   controls = true,
+  hoverPlay = false,
 }: {
   asset: Pick<Asset, "url" | "kind" | "mimeType" | "name">;
   className?: string;
   controls?: boolean;
+  /** Play silently while the pointer is over the tile — a moving thumbnail. */
+  hoverPlay?: boolean;
 }) {
   const playable = asset.mimeType.startsWith("video/");
 
@@ -40,6 +43,16 @@ export function MediaPreview({
         loop
         muted
         playsInline
+        preload="metadata"
+        onMouseEnter={hoverPlay ? (event) => void event.currentTarget.play().catch(() => undefined) : undefined}
+        onMouseLeave={
+          hoverPlay
+            ? (event) => {
+                event.currentTarget.pause();
+                event.currentTarget.currentTime = 0;
+              }
+            : undefined
+        }
       />
     );
   }

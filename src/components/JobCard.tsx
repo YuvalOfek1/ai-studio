@@ -1,9 +1,11 @@
 "use client";
 
 import clsx from "clsx";
-import { AlertTriangle, CheckCircle2, Download, Loader2, XCircle } from "lucide-react";
+import { useState } from "react";
+import { AlertTriangle, CheckCircle2, Download, Expand, Loader2, XCircle } from "lucide-react";
 import type { Job } from "@/lib/client/types";
 import { MediaPreview } from "./MediaPreview";
+import { MediaLightbox } from "./MediaLightbox";
 import { formatMoney } from "@/lib/pricing/estimate";
 
 const STATUS_STYLE: Record<Job["status"], string> = {
@@ -15,6 +17,7 @@ const STATUS_STYLE: Record<Job["status"], string> = {
 };
 
 export function JobCard({ job, onCancel }: { job: Job; onCancel?: (id: string) => void }) {
+  const [preview, setPreview] = useState<number | null>(null);
   const running = job.status === "RUNNING" || job.status === "QUEUED";
   const prompt = String(job.params?.prompt ?? job.params?.text ?? job.params?.promptText ?? "");
 
@@ -76,7 +79,22 @@ export function JobCard({ job, onCancel }: { job: Job; onCancel?: (id: string) =
               key={asset.id}
               className={clsx("group relative bg-ink-850", asset.kind === "AUDIO" ? "p-1" : "aspect-video")}
             >
-              <MediaPreview asset={asset} controls={asset.kind !== "IMAGE"} className="h-full w-full" />
+              <MediaPreview
+                asset={asset}
+                controls={asset.kind === "AUDIO"}
+                hoverPlay
+                className="h-full w-full"
+              />
+              {asset.kind !== "AUDIO" && (
+                <button
+                  type="button"
+                  onClick={() => setPreview(job.assets.indexOf(asset))}
+                  className="absolute inset-0 flex cursor-zoom-in items-center justify-center bg-ink-950/40 opacity-0 transition group-hover:opacity-100"
+                  title="Open preview"
+                >
+                  <Expand className="h-5 w-5 text-white" />
+                </button>
+              )}
               <a
                 href={asset.url}
                 download={asset.name}
@@ -88,6 +106,15 @@ export function JobCard({ job, onCancel }: { job: Job; onCancel?: (id: string) =
             </div>
           ))}
         </div>
+      )}
+
+      {preview !== null && job.assets[preview] && (
+        <MediaLightbox
+          assets={job.assets}
+          index={preview}
+          onIndexChange={setPreview}
+          onClose={() => setPreview(null)}
+        />
       )}
     </div>
   );
