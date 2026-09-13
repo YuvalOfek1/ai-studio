@@ -1,0 +1,161 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// A workspace that owns assets, jobs and node workflows.
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  coverAssetId String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  assets    Asset[]
+  jobs      Job[]
+  workflows Workflow[]
+
+  @@index([updatedAt])
+}
+
+enum AssetKind {
+  IMAGE
+  VIDEO
+  AUDIO
+}
+
+/// A piece of media on disk (or S3), produced by a job or uploaded by the user.
+model Asset {
+  id          String    @id @default(cuid())
+  projectId   String
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  kind        AssetKind
+  name        String
+  storageKey  String
+  mimeType    String
+  sizeBytes   Int       @default(0)
+  width       Int?
+  height      Int?
+  durationMs  Int?
+  thumbnailKey String?
+  source      String    @default("upload") // upload | generated
+  meta        Json      @default("{}")
+  jobId       String?
+  job         Job?      @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  createdAt   DateTime  @default(now())
+
+  voiceSamples Voice[]
+
+  @@index([projectId, createdAt])
+  @@index([kind])
+}
+
+enum JobStatus {
+  QUEUED
+  RUNNING
+  SUCCEEDED
+  FAILED
+  CANCELED
+}
+
+/// One generation request against one provider model.
+model Job {
+  id             String    @id @default(cuid())
+  projectId      String
+  project        Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  capability     String
+  providerId     String
+  modelId        String
+  label          String?
+  params         Json      @default("{}")
+  status         JobStatus @default(QUEUED)
+  progress       Int       @default(0)
+  providerTaskId String?
+  error          String?
+  costEstimate   Float?
+  attempts       Int       @default(0)
+  startedAt      DateTime?
+  finishedAt     DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  workflowRunId String?
+  workflowRun   WorkflowRun? @relation(fields: [workflowRunId], references: [id], onDelete: Cascade)
+  nodeId        String?
+
+  assets Asset[]
+
+  @@index([projectId, createdAt])
+  @@index([status])
+  @@index([workflowRunId])
+}
+
+/// A saved node graph.
+model Workflow {
+  id          String   @id @default(cuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  graph       Json     @default("{\"nodes\":[],\"edges\":[]}")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  runs WorkflowRun[]
+
+  @@index([projectId, updatedAt])
+}
+
+enum RunStatus {
+  QUEUED
+  RUNNING
+  SUCCEEDED
+  FAILED
+  CANCELED
+}
+
+model WorkflowRun {
+  id         String    @id @default(cuid())
+  workflowId String
+  workflow   Workflow  @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  status     RunStatus @default(QUEUED)
+  outputs    Json      @default("{}")
+  error      String?
+  startedAt  DateTime?
+  finishedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  jobs Job[]
+
+  @@index([workflowId, createdAt])
+}
+
+/// An API key for a direct vendor API, encrypted at rest with APP_SECRET.
+model Credential {
+  id         String   @id @default(cuid())
+  providerId String   @unique
+  label      String?
+  secret     String // AES-256-GCM ciphertext
+  meta       Json     @default("{}")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+/// A voice registered with a TTS provider (e.g. an ElevenLabs instant clone of an mp3).
+model Voice {
+  id              String   @id @default(cuid())
+  name            String
+  providerId      String
+  providerVoiceId String
+  description     String?
+  sampleAssetId   String?
+  sampleAsset     Asset?   @relation(fields: [sampleAssetId], references: [id], onDelete: SetNull)
+  createdAt       DateTime @default(now())
+
+  @@unique([providerId, providerVoiceId])
+}
