@@ -17,7 +17,7 @@ taking a cut, so you pay each vendor's list price.
 | Edit image | image + instruction | edited image |
 | Text to video | prompt | clip |
 | Image to video | start frame + prompt | clip |
-| **Start + end frame** | two frames + prompt | clip interpolating between them |
+| **Start + end frame** | a start frame, optionally an end frame | clip interpolating between them — or animating from the start frame alone if you leave the end empty |
 | Extend video | clip + prompt | longer clip |
 | Lip sync | clip + audio | clip with matched mouth |
 | Voice over | script + voice | mp3 |
@@ -27,7 +27,10 @@ taking a cut, so you pay each vendor's list price.
 Each one is a *capability*. Several vendors can serve the same capability, so you pick the
 model per generation from one dropdown.
 
-Wire those same workflows together on the canvas:
+Wire those same workflows together on the canvas — drag a port onto another to
+connect, click a line and press Delete (or use the × on it) to remove one, and drag
+either end of a line to re-route it. Ports are typed, so an audio output will not
+attach to an image input:
 
 ![node canvas](docs/flow.png)
 

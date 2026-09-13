@@ -75,7 +75,12 @@ const models: ModelSpec[] = [
     fields: [
       { key: "model", label: "Model", type: "select", default: "MiniMax-Hailuo-02", options: VIDEO_MODELS },
       { key: "image", label: "Start frame", type: "image", required: true },
-      { key: "image_tail", label: "End frame", type: "image", required: true },
+      {
+        key: "image_tail",
+        label: "End frame",
+        type: "image",
+        help: "Optional — leave empty to animate from the start frame alone.",
+      },
       prompt,
       duration,
       resolution,

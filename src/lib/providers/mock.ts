@@ -137,7 +137,12 @@ const models: ModelSpec[] = [
   ]),
   model("mock-flf2v", "Mock start + end frame", "video.startEndFrame", [
     { key: "image", label: "Start frame", type: "image", required: true },
-    { key: "image_tail", label: "End frame", type: "image", required: true },
+    {
+        key: "image_tail",
+        label: "End frame",
+        type: "image",
+        help: "Optional — leave empty to animate from the start frame alone.",
+      },
     promptField,
     durationField,
   ]),

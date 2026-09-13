@@ -1,3 +1,4 @@
+import "../src/lib/load-env";
 import { PrismaClient } from "@prisma/client";
 
 /** Gives a fresh install something to click on. */

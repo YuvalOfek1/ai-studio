@@ -1,4 +1,6 @@
 @import "tailwindcss";
+/* before our overrides below, so ours win */
+@import "@xyflow/react/dist/style.css";
 
 @theme {
   --color-ink-950: #07070b;
@@ -128,9 +130,40 @@ input[type="range"] {
   stroke-width: 2;
 }
 .react-flow__handle {
-  width: 11px;
-  height: 11px;
+  width: 13px;
+  height: 13px;
   border: 2px solid var(--color-ink-900);
+  transition: box-shadow 120ms ease;
+}
+
+/* a port is 11px but should be easy to hit — this widens the target invisibly */
+.react-flow__handle::after {
+  content: "";
+  position: absolute;
+  inset: -9px;
+  border-radius: 9999px;
+}
+
+.react-flow__handle:hover {
+  box-shadow: 0 0 0 5px rgba(129, 140, 248, 0.3);
+}
+
+/* while dragging a connection: green where it can land, red where it cannot */
+.react-flow__handle.connectingfrom,
+.react-flow__handle.valid {
+  box-shadow: 0 0 0 5px rgba(16, 185, 129, 0.4);
+}
+
+.react-flow__handle.connectingto:not(.valid) {
+  box-shadow: 0 0 0 5px rgba(244, 63, 94, 0.35);
+}
+
+.react-flow__edge.selected .react-flow__edge-path {
+  filter: drop-shadow(0 0 6px rgba(129, 140, 248, 0.55));
+}
+
+.react-flow__edge:hover .react-flow__edge-path {
+  stroke-width: 3;
 }
 .react-flow__controls-button {
   background: rgba(20, 20, 30, 0.9);

@@ -139,7 +139,12 @@ const models: ModelSpec[] = [
     fields: [
       { key: "model_name", label: "Model version", type: "select", default: "kling-v1-6", options: VIDEO_MODELS },
       { key: "image", label: "Start frame", type: "image", required: true },
-      { key: "image_tail", label: "End frame", type: "image", required: true },
+      {
+        key: "image_tail",
+        label: "End frame",
+        type: "image",
+        help: "Optional — leave empty to animate from the start frame alone.",
+      },
       prompt,
       negative,
       mode,

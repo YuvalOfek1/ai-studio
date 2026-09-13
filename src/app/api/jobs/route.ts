@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { route } from "@/lib/api";
+import { BadRequestError, route } from "@/lib/api";
 import { enqueueGeneration } from "@/lib/queue";
 import { getModel } from "@/lib/providers/registry";
 import { mediaUrl } from "@/lib/storage";
@@ -55,7 +55,7 @@ export async function POST(request: Request) {
       if (!field.required) continue;
       const value = body.params[field.key];
       if (value === undefined || value === null || value === "") {
-        throw new Error(`"${field.label}" is required`);
+        throw new BadRequestError(`"${field.label}" is required`);
       }
     }
 

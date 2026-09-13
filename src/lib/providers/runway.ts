@@ -54,7 +54,12 @@ const models: ModelSpec[] = [
     capability: "video.startEndFrame",
     fields: [
       { key: "image", label: "Start frame", type: "image", required: true },
-      { key: "image_tail", label: "End frame", type: "image", required: true },
+      {
+        key: "image_tail",
+        label: "End frame",
+        type: "image",
+        help: "Optional — leave empty to animate from the start frame alone.",
+      },
       ...shared,
     ],
   },

@@ -9,6 +9,7 @@ import {
   ReactFlow,
   ReactFlowProvider,
   addEdge,
+  reconnectEdge,
   useEdgesState,
   useNodesState,
   useReactFlow,
@@ -16,7 +17,6 @@ import {
   type Edge,
   type Node,
 } from "@xyflow/react";
-import "@xyflow/react/dist/style.css";
 import clsx from "clsx";
 import { Loader2, Play, Save, Trash2 } from "lucide-react";
 import { get, patch, post } from "@/lib/client/api";
@@ -26,9 +26,11 @@ import { useProjectStream } from "@/lib/client/useProjectStream";
 import { ParamFields } from "@/components/ParamFields";
 import { AssetSlot } from "@/components/AssetPicker";
 import { StudioNode, type StudioNodeData } from "./StudioNode";
+import { StudioEdge } from "./StudioEdge";
 import { computePorts, findModel } from "./ports";
 
 const nodeTypes = { studio: StudioNode };
+const edgeTypes = { studio: StudioEdge };
 
 let nodeCounter = 0;
 const nextId = () => `n${Date.now().toString(36)}${(nodeCounter++).toString(36)}`;
@@ -47,7 +49,9 @@ function Canvas({ projectId, workflow }: { projectId: string; workflow: Workflow
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>(
     ((workflow.graph?.nodes ?? []) as Node[]).map((node) => ({ ...node, type: "studio" })),
   );
-  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>((workflow.graph?.edges ?? []) as Edge[]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(
+    ((workflow.graph?.edges ?? []) as Edge[]).map((edge) => ({ ...edge, type: "studio", reconnectable: true })),
+  );
   const [name, setName] = useState(workflow.name);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -180,12 +184,24 @@ function Canvas({ projectId, workflow }: { projectId: string; workflow: Workflow
           (edge) => !(edge.target === connection.target && edge.targetHandle === connection.targetHandle),
         );
         return addEdge(
-          { ...connection, animated: true, style: { stroke: PORT_COLORS[type], strokeWidth: 2 } },
+          {
+            ...connection,
+            type: "studio",
+            animated: true,
+            reconnectable: true,
+            style: { stroke: PORT_COLORS[type], strokeWidth: 2 },
+          },
           cleaned,
         );
       });
     },
     [portType, setEdges],
+  );
+
+  const onReconnect = useCallback(
+    (previous: Edge, connection: Connection) =>
+      setEdges((current) => reconnectEdge(previous, connection, current)),
+    [setEdges],
   );
 
   async function save() {
@@ -292,6 +308,9 @@ function Canvas({ projectId, workflow }: { projectId: string; workflow: Workflow
             onChange={(e) => setName(e.target.value)}
             className="max-w-[220px] !border-transparent !bg-transparent !px-0 text-sm font-medium text-white"
           />
+          <span className="hidden text-[11px] text-mist-400 lg:inline">
+            Drag a port onto another to connect · click a line then press Delete, or use its ×
+          </span>
           <div className="ml-auto flex items-center gap-2">
             {error && <span className="max-w-[320px] truncate text-[11px] text-rose-400">{error}</span>}
             {run && (
@@ -342,13 +361,17 @@ function Canvas({ projectId, workflow }: { projectId: string; workflow: Workflow
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
+            onReconnect={onReconnect}
             isValidConnection={isValidConnection}
             nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
+            deleteKeyCode={["Delete", "Backspace"]}
+            connectionRadius={28}
             onNodeClick={(_, node) => setSelectedId(node.id)}
             onPaneClick={() => setSelectedId(null)}
             fitView
             proOptions={{ hideAttribution: true }}
-            defaultEdgeOptions={{ animated: true }}
+            defaultEdgeOptions={{ type: "studio", animated: true, reconnectable: true }}
             className="bg-transparent"
           >
             <Background variant={BackgroundVariant.Dots} gap={22} size={1} color="rgba(255,255,255,0.10)" />

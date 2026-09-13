@@ -7,5 +7,5 @@ if (fs.existsSync(".env")) process.loadEnvFile(".env");
 
 export default defineConfig({
   schema: path.join("prisma", "schema.prisma"),
-  migrations: { seed: "tsx --env-file=.env prisma/seed.ts" },
+  migrations: { seed: "tsx prisma/seed.ts" },
 });

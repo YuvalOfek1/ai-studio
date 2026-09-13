@@ -2,6 +2,14 @@ import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 import { ProviderError } from "./providers/types";
 
+/** A problem with the request itself — answered as 400, not 500. */
+export class BadRequestError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "BadRequestError";
+  }
+}
+
 export function ok<T>(data: T, init?: ResponseInit) {
   return NextResponse.json(data as object, init);
 }
@@ -16,6 +24,7 @@ export function handleError(error: unknown) {
     const first = error.issues[0];
     return fail(`${first.path.join(".") || "request"}: ${first.message}`, 422);
   }
+  if (error instanceof BadRequestError) return fail(error.message, 400);
   if (error instanceof ProviderError) return fail(error.message, error.status ?? 502);
   const message = error instanceof Error ? error.message : "Unexpected error";
   console.error("[api]", error);

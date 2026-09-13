@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { fail, route } from "@/lib/api";
+import { BadRequestError, fail, route } from "@/lib/api";
 import { enqueueWorkflowRun } from "@/lib/queue";
 import { topologicalOrder, type FlowGraph } from "@/lib/engine/nodes";
 
@@ -12,7 +12,11 @@ export async function POST(_request: Request, { params }: { params: Promise<{ id
   if (!graph.nodes?.length) return fail("This flow is empty — drag in a node first", 400);
 
   return route(async () => {
-    topologicalOrder(graph); // fail fast on cycles, before a run row exists
+    try {
+      topologicalOrder(graph); // fail fast on cycles, before a run row exists
+    } catch (error) {
+      throw new BadRequestError((error as Error).message);
+    }
     const run = await prisma.workflowRun.create({ data: { workflowId: id } });
     await enqueueWorkflowRun(run.id);
     return { run };

@@ -33,7 +33,7 @@ export const CAPABILITIES: CapabilityInfo[] = [
   { id: "image.edit", label: "Edit image", description: "Change an existing image with a prompt.", output: "IMAGE", icon: "wand" },
   { id: "video.text2video", label: "Text to video", description: "Prompt straight to a video clip.", output: "VIDEO", icon: "film" },
   { id: "video.image2video", label: "Image to video", description: "Animate a single image.", output: "VIDEO", icon: "play" },
-  { id: "video.startEndFrame", label: "Start + end frame", description: "Interpolate a clip between two frames.", output: "VIDEO", icon: "arrows" },
+  { id: "video.startEndFrame", label: "Start + end frame", description: "Interpolate between two frames — or just the first, if you leave the end empty.", output: "VIDEO", icon: "arrows" },
   { id: "video.extend", label: "Extend video", description: "Continue an existing clip.", output: "VIDEO", icon: "forward" },
   { id: "video.lipsync", label: "Lip sync", description: "Match a face in a video to an audio track.", output: "VIDEO", icon: "mic" },
   { id: "audio.tts", label: "Voice over", description: "Text to speech in a chosen or cloned voice.", output: "AUDIO", icon: "speaker" },

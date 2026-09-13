@@ -1,3 +1,4 @@
+import "../src/lib/load-env";
 import { Worker } from "bullmq";
 import { JOB_QUEUE, RUN_QUEUE, redisConnection } from "../src/lib/queue";
 import { runJob } from "../src/lib/jobs/runner";

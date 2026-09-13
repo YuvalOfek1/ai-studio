@@ -41,11 +41,11 @@ export function StudioNode({ data, selected }: NodeProps) {
   return (
     <div
       className={clsx(
-        "w-[264px] overflow-hidden rounded-2xl border bg-ink-850/95 shadow-xl shadow-black/40 backdrop-blur transition",
+        "w-[264px] rounded-2xl border bg-ink-850/95 shadow-xl shadow-black/40 backdrop-blur transition",
         selected ? "border-accent-400" : "border-white/10",
       )}
     >
-      <div className={clsx("bg-gradient-to-r px-3 py-2.5", KIND_ACCENT[node.kind] ?? KIND_ACCENT.generate)}>
+      <div className={clsx("rounded-t-2xl bg-gradient-to-r px-3 py-2.5", KIND_ACCENT[node.kind] ?? KIND_ACCENT.generate)}>
         <div className="flex items-center justify-between gap-2">
           <span className="truncate text-[12px] font-semibold text-white">
             {node.label ?? node.kind}
@@ -106,7 +106,7 @@ export function StudioNode({ data, selected }: NodeProps) {
 
       {/* one row per port: the handle sits inside the row, so labels can never overlap */}
       {rows.length > 0 && (
-        <div className="border-t border-white/8 py-1.5">
+        <div className="rounded-b-2xl border-t border-white/8 py-1.5">
           {rows.map((row, index) => (
             <div key={index} className="relative flex h-[22px] items-center justify-between px-3">
               {row.input ? (
