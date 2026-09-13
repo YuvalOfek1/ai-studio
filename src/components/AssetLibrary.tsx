@@ -99,7 +99,7 @@ export function AssetLibrary({ projectId }: { projectId: string }) {
               <button
                 type="button"
                 onClick={() => setPreview(visible.indexOf(asset))}
-                className="relative block aspect-square w-full cursor-zoom-in"
+                className="relative block aspect-square w-full cursor-pointer"
                 title="Open preview"
               >
                 <MediaPreview asset={asset} controls={false} hoverPlay className="h-full w-full" />

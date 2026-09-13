@@ -89,7 +89,7 @@ export function JobCard({ job, onCancel }: { job: Job; onCancel?: (id: string) =
                 <button
                   type="button"
                   onClick={() => setPreview(job.assets.indexOf(asset))}
-                  className="absolute inset-0 flex cursor-zoom-in items-center justify-center bg-ink-950/40 opacity-0 transition group-hover:opacity-100"
+                  className="absolute inset-0 flex cursor-pointer items-center justify-center bg-ink-950/40 opacity-0 transition group-hover:opacity-100"
                   title="Open preview"
                 >
                   <Expand className="h-5 w-5 text-white" />
